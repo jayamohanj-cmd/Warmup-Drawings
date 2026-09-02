@@ -1,0 +1,201 @@
+/* Daily Drawing Warm-Up — projector first.
+   Dark ink on warm paper is the default because light-on-dark washes out on
+   a tired lamp. Press D for the dark palette if your room can take it. */
+
+:root {
+  --paper: #faf8f4;
+  --ink: #16130f;
+  --ink-soft: #16130f8c;
+  --hair: #16130f26;
+  --accent: #a35c19;              /* observation — ochre */
+  --grain: 0.045;
+  color-scheme: light;
+}
+
+body.is-invention { --accent: #274b78; }   /* invention — ink blue */
+body.is-custom { --accent: #16130f8c; }    /* yours — off-catalogue, no hue */
+
+body.dark {
+  --paper: #14120f;
+  --ink: #f4efe6;
+  --ink-soft: #f4efe6a1;
+  --hair: #f4efe633;
+  --accent: #d99242;
+  --grain: 0.06;
+  color-scheme: dark;
+}
+body.dark.is-invention { --accent: #8fb2de; }
+body.dark.is-custom { --accent: #f4efe6a1; }
+
+* { box-sizing: border-box; margin: 0; }
+
+html, body { height: 100%; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  overflow: hidden;
+}
+
+body.hide-cursor { cursor: none; }
+
+/* full-bleed accent at the very top — tells the back row which kind of day
+   this is before anyone has read a word */
+.edge {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 5px;
+  background: var(--accent);
+  z-index: 3;
+}
+
+/* paper tooth. Low enough that it never eats contrast. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: var(--grain);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* registration marks, gallery-label style */
+.corner {
+  position: fixed;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--hair);
+  z-index: 1;
+}
+.tl { top: 26px;    left: 26px;  border-width: 1px 0 0 1px; }
+.tr { top: 26px;    right: 26px; border-width: 1px 1px 0 0; }
+.bl { bottom: 26px; left: 26px;  border-width: 0 0 1px 1px; }
+.br { bottom: 26px; right: 26px; border-width: 0 1px 1px 0; }
+
+/* ---------- layout ---------- */
+
+.stage {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  padding: clamp(2.5rem, 6vh, 5rem) clamp(2rem, 7vw, 8rem);
+  display: grid;
+  grid-template-rows: auto auto 1fr auto auto;
+  align-items: center;
+  gap: clamp(0.9rem, 2.2vh, 1.8rem);
+}
+
+.stage.enter { animation: rise 0.45s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stage.enter { animation: none; }
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: clamp(0.66rem, 1.05vw, 1.05rem);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.tag { color: var(--accent); font-weight: 500; }
+.num { font-variant-numeric: tabular-nums; }
+
+.rule {
+  height: 1px;
+  background: var(--hair);
+}
+
+.rule--timer { position: relative; }
+
+/* the rule under the prompt is the timer. Subordinate, but readable from
+   anywhere in the room — which a small numeral is not. */
+.rule--timer .fill {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform-origin: left;
+  transform: scaleX(1);
+}
+
+/* ---------- the prompt ---------- */
+
+.prompt {
+  align-self: center;
+  max-width: 30ch;
+  margin: 0 auto;
+  font-family: Fraunces, "Iowan Old Style", Palatino, "Book Antiqua", Georgia, serif;
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 28, "WONK" 1;
+  font-weight: 400;
+  font-size: clamp(2rem, min(7vw, 12vh), 9rem);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  hyphens: none;
+}
+
+/* three buckets, set from word count in app.js. A prompt long enough to
+   overflow is a prompt that wants cutting — so it is allowed to overflow. */
+.prompt.is-short { font-size: clamp(2.4rem, min(9vw, 15.5vh), 11rem); }
+.prompt.is-long  { font-size: clamp(1.8rem, min(5.5vw, 8.5vh), 7rem); }
+
+/* composing a custom prompt — same type, in place, with a line to write on */
+.prompt.composing {
+  outline: none;
+  caret-color: var(--accent);
+  border-bottom: 2px solid var(--hair);
+  padding-bottom: 0.12em;
+  min-height: 1.1em;
+  min-width: 12ch;
+}
+.prompt.composing:empty::before {
+  content: "Your prompt";
+  color: var(--hair);
+}
+
+.clock {
+  font-size: clamp(0.9rem, 2vw, 2rem);
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+  transition: color 0.4s;
+}
+.clock.running { color: var(--ink); }
+.clock.last    { color: var(--accent); }
+
+/* only shown when the prompt needs something beyond a pencil */
+.materials {
+  color: var(--accent);
+  font-size: clamp(0.66rem, 1.05vw, 1.05rem);
+  letter-spacing: 0.22em;
+}
+
+.legend {
+  position: fixed;
+  z-index: 4;
+  left: 50%;
+  bottom: 1.6rem;
+  transform: translateX(-50%);
+  padding: 0.7rem 1.2rem;
+  border: 1px solid var(--hair);
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+}
+.legend b { color: var(--ink); font-weight: 500; padding: 0 0.15em 0 0.9em; }
+.legend b:first-child { padding-left: 0; }
+
+/* phone / tablet — not the target, but it shouldn't look broken */
+@media (max-width: 640px) {
+  .prompt { max-width: 22ch; }
+  .corner { display: none; }
+}

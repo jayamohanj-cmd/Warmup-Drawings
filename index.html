@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daily Drawing Warm-Up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="edge" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<main class="stage">
+  <header class="meta">
+    <span class="tag" id="tag"></span>
+    <span class="num" id="num"></span>
+  </header>
+
+  <div class="rule rule--top" aria-hidden="true"></div>
+
+  <h1 class="prompt" id="prompt"></h1>
+
+  <div class="rule rule--timer" aria-hidden="true"><span class="fill" id="fill"></span></div>
+
+  <footer class="meta">
+    <span class="clock" id="clock">4:00</span>
+    <span class="materials" id="materials"></span>
+  </footer>
+</main>
+
+<aside class="legend" id="legend" hidden>
+  <b>&larr; &rarr;</b> prompt <b>space</b> start / pause <b>r</b> reset
+  <b>c</b> write your own <b>f</b> full screen <b>d</b> dark <b>h</b> hide this
+</aside>
+
+<span class="corner tl" aria-hidden="true"></span>
+<span class="corner tr" aria-hidden="true"></span>
+<span class="corner bl" aria-hidden="true"></span>
+<span class="corner br" aria-hidden="true"></span>
+
+<script src="prompts.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
