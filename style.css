@@ -113,16 +113,26 @@ body.hide-cursor { cursor: none; }
   background: var(--hair);
 }
 
-.rule--timer { position: relative; }
+.rule--timer { position: relative; background: none; }
 
 /* the rule under the prompt is the timer. Subordinate, but readable from
    anywhere in the room — which a small numeral is not. */
-.rule--timer .fill {
+.wave {
   position: absolute;
-  inset: 0;
-  background: var(--accent);
-  transform-origin: left;
-  transform: scaleX(1);
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 20px;
+  transform: translateY(-50%);
+  overflow: visible;
+}
+
+/* Flat at 0:00 is exactly the hairline this replaced, and the svg overflows a
+   1px box so the row costs no more height than that hairline did. */
+.wave path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1;
 }
 
 /* ---------- the prompt ---------- */

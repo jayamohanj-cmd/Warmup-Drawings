@@ -24,7 +24,11 @@
 
   <h1 class="prompt" id="prompt"></h1>
 
-  <div class="rule rule--timer" aria-hidden="true"><span class="fill" id="fill"></span></div>
+  <div class="rule rule--timer" aria-hidden="true">
+    <svg class="wave" viewBox="0 0 1000 20" preserveAspectRatio="none">
+      <path id="wave" vector-effect="non-scaling-stroke"></path>
+    </svg>
+  </div>
 
   <footer class="meta">
     <span class="clock" id="clock">4:00</span>
@@ -33,7 +37,7 @@
 </main>
 
 <aside class="legend" id="legend">
-  <b>&larr; &rarr;</b> prompt <b>space</b> start / pause <b>r</b> reset
+  <b>&larr; &rarr;</b> prompt <b>space</b> start / pause <b>r</b> reset <b>3-9</b> minutes
   <b>c</b> write your own <b>f</b> full screen <b>d</b> dark <b>h</b> hide this
 </aside>
 

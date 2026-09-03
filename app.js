@@ -3,6 +3,7 @@
 const KEY = "warmup";
 const THEME = "warmup-theme";
 const CUSTOM = "warmup-custom";
+const MINUTES = "warmup-minutes";
 const HINT = "type your prompt · enter to show · esc to cancel";
 
 const el = {
@@ -10,7 +11,7 @@ const el = {
   tag: document.getElementById("tag"),
   num: document.getElementById("num"),
   prompt: document.getElementById("prompt"),
-  fill: document.getElementById("fill"),
+  wave: document.getElementById("wave"),
   clock: document.getElementById("clock"),
   materials: document.getElementById("materials"),
   legend: document.getElementById("legend"),
@@ -53,18 +54,36 @@ let remaining = 0;
 let running = false;
 let last = 0;
 let ticker = null;
+let phase = 0;
+let shown = "";
+
+const AMP = 6; // wave height at full time, in viewBox units. Tune for the room.
+const calm = matchMedia("(prefers-reduced-motion: reduce)");
+
+// The wave is the ambient readout: full squiggle at the start, dead flat at
+// 0:00. The numeral in the footer keeps the precision. Motion means running,
+// so a frozen squiggle reads as paused without needing an icon.
+function wave() {
+  const amp = duration ? AMP * (remaining / duration) : 0;
+  let d = "M0 10";
+  for (let x = 10; x <= 1000; x += 10) {
+    d += " L" + x + " " + (10 + amp * Math.sin(x / 40 + phase)).toFixed(2);
+  }
+  el.wave.setAttribute("d", d);
+}
 
 function paint() {
   const secs = Math.ceil(remaining / 1000);
-  el.clock.textContent = Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0");
+  const text = Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0");
+  if (text !== shown) el.clock.textContent = shown = text;
   el.clock.classList.toggle("running", running);
   el.clock.classList.toggle("last", remaining > 0 && remaining <= 30000);
-  el.fill.style.transform = "scaleX(" + remaining / duration + ")";
+  wave();
 }
 
 function stop() {
   running = false;
-  clearInterval(ticker);
+  cancelAnimationFrame(ticker);
   ticker = null;
   paint();
 }
@@ -72,21 +91,41 @@ function stop() {
 function start() {
   if (remaining <= 0) return;
   running = true;
-  last = Date.now();
-  ticker = setInterval(() => {
-    const now = Date.now();
+  last = performance.now();
+  const step = (now) => {
     remaining = Math.max(0, remaining - (now - last));
+    if (!calm.matches) phase += (now - last) / 500;
     last = now;
-    if (remaining === 0) stop();
-    else paint();
-  }, 100);
+    if (remaining === 0) return stop();
+    paint();
+    ticker = requestAnimationFrame(step);
+  };
+  ticker = requestAnimationFrame(step);
   paint();
 }
 
 function reset() {
   stop();
   remaining = duration;
+  phase = 0;
   paint();
+}
+
+// Length is a room preference, not a property of the prompt: it sticks across
+// days and overrides the prompt's own minutes. 0 means use the prompt's value.
+let minutes = 0;
+try {
+  const m = Number(localStorage.getItem(MINUTES));
+  if (m >= 1 && m <= 9) minutes = m;
+} catch (e) {}
+
+function setMinutes(m) {
+  minutes = m;
+  try {
+    localStorage.setItem(MINUTES, String(m));
+  } catch (e) {}
+  duration = m * 60000;
+  reset();
 }
 
 // ---------- prompts ----------
@@ -109,7 +148,7 @@ function show(i) {
   el.prompt.className = "prompt " + size(p.text);
   el.materials.textContent = p.materials === "pencil" ? "" : p.materials;
 
-  duration = p.minutes * 60000;
+  duration = (minutes || p.minutes) * 60000;
   reset();
 }
 
@@ -150,7 +189,7 @@ function showCustom(text) {
   el.prompt.textContent = text;
   el.prompt.className = "prompt " + size(text);
   el.materials.textContent = "";
-  duration = 4 * 60000;
+  duration = (minutes || 4) * 60000;
   reset();
 }
 
@@ -227,6 +266,7 @@ document.addEventListener("keydown", (e) => {
   } else if (k === "f") {
     document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
   } else if (k === "h") el.legend.hidden = !el.legend.hidden;
+  else if (k >= "1" && k <= "9") setMinutes(Number(k));
   else return;
 
   e.preventDefault();
