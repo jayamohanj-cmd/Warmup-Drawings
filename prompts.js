@@ -1,4 +1,4 @@
-// Daily Drawing Warm-Up — 22 prompts
+// Daily Drawing Warm-Up — 23 prompts
 //
 // Cut down from 60 after reading the whole set: these are the ones that work.
 // The cut was lopsided — 25 of 30 observation prompts came out against 5 of 30
@@ -14,9 +14,9 @@
 // Skill tally (targets for the full build are in CLAUDE.md):
 //   observation  contour 2 · gesture 2 · memory 1 · value 1 ·
 //                cropping 1                                        = 7
-//   invention    constraint-game 3 · systems 3 · object-invention 2 ·
+//   invention    constraint-game 4 · systems 3 · object-invention 2 ·
 //                narrative 2 · worldbuilding 2 · hybrid 1 ·
-//                character 1 · metaphor 1                              = 15
+//                character 1 · metaphor 1                              = 16
 
 const PROMPTS = [
   {
@@ -174,13 +174,21 @@ const PROMPTS = [
   {
     id: 20,
     type: "invention",
+    skill: "constraint-game",
+    text: "Draw anything for two minutes. Then swap pages with a neighbor and continue their drawing until the timer ends.",
+    minutes: 4,
+    materials: "pencil",
+  },
+  {
+    id: 21,
+    type: "invention",
     skill: "worldbuilding",
     text: "Water is now worth more than gold. Draw what a drinking fountain would look like.",
     minutes: 4,
     materials: "pencil",
   },
   {
-    id: 21,
+    id: 22,
     type: "invention",
     skill: "narrative",
     text: "Draw the second before something breaks. Whatever it is must still be whole in your drawing.",
@@ -188,7 +196,7 @@ const PROMPTS = [
     materials: "pencil",
   },
   {
-    id: 22,
+    id: 23,
     type: "invention",
     skill: "metaphor",
     text: "Draw the sound of this room right now. No people, no objects — only marks. Fill the page.",
